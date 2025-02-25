@@ -36,8 +36,8 @@ class Admim extends Usuario {
     
 //exemplo de uso
 
-const usuario1 = new Usuario('Julia', 'Miranda@gmail.com', '3536');
-const usuario2 = new Admim('Jéssica', 'Lohanny@gmail.com', '1111', 'alto');
+const usuario1 = new Usuario('Julia', 'julia@gmail.com', '3536');
+const usuario2 = new Admim('Jéssica', 'jessie@gmail.com', '1111', 'alto');
 console.log(usuario1.autenticar('3536')); 
 console.log(usuario2.autenticar('1111')); 
 usuario2.banirUsuario(usuario1);
