@@ -42,7 +42,7 @@ class userService {
 
     addUser(nome, email, senha, endereço, telefone, cpf) {
         try {
-            const user = new User(this.nextId++, nome, email, );
+            const user = new User(this.nextId++, nome, email, senha, endereço, telefone, cpf);
             this.users.push(user);
             this.saveUsers();
             return user;
@@ -56,6 +56,32 @@ class userService {
             return this.users
         } catch (erro) {
             console.log('Erro ao buscar usuário', erro);
+        }
+    }
+
+    deleteUser(id) {
+        try {
+            this.users = this.users.filter(user => user.id !== id);
+            this.saveUsers();
+        } catch (erro) {
+            console.log('Erro ao buscar usuário', erro);
+        }
+    }
+
+    alterUser(id, nome, email, senha, endereco, telefone, cpf){
+        try{
+            const user = this.users.find(user => user.id === id);
+            if(!user) throw new Error("Usuário não encontrado");
+            user.nome = nome;
+            user.email = email;
+            user.senha = senha;
+            user.endereco = endereco;
+            user.telefone = telefone;
+            user.cpf = cpf;
+            this.saveUsers();
+            return user;
+        }catch(erro){
+            console.log("Erro ao alterar um usuário", erro);
         }
     }
 
