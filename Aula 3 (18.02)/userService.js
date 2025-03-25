@@ -1,6 +1,7 @@
 const User = require("./user");
 const path = require('path'); //Modulo para manipular caminhos
 const fs = require('fs'); //Modulo para manipular arquivos (file system)
+const bcrypt = require('bcryptjs'); //modulo parar criptografar senhas
 
 class userService {
     constructor() {
@@ -11,17 +12,17 @@ class userService {
 
     loadUsers() {
         try {
-            if (fs.existsSync(this.filePath)) { //verifica se o arquivo existe
-                const data = fs.readFileSync(this.filePath); //le o arquivo
-                return JSON.parse(data); //transforma o json em objeto
+            if (fs.existsSync(this.filePath)) { //Verifica se o arquivo existe
+                const data = fs.readFileSync(this.filePath); //Le o arquivo
+                return JSON.parse(data); //Transforma o json em objeto
             }
         } catch (erro) {
             console.log('Erro ao carregar arquivo', erro);
         }
-        return []; //retorna um array vazio
+        return []; //Retorna um array vazio
     }
 
-    //definir o prox id a ser utilizado
+    //Definir o prox id a ser utilizado
     getNextId() {
         try {
             if (this.users.length === 0) return 1;
@@ -40,11 +41,12 @@ class userService {
     }
 
 
-    addUser(nome, email, senha, endereço, telefone, cpf) {
+    async addUser(nome, email, senha, endereço, telefone, cpf) {
         try {
-            const user = new User(this.nextId++, nome, email, );
-            this.users.push(user);
-            this.saveUsers();
+            const senhaCripto = await bcrypt.hash (senha, 10)
+            const user = new User(this.nextId++, nome, email, senhaCripto, endereço, telefone, cpf);
+            this.users.push(user); //Adiciona usuario no array
+            this.saveUsers(); //Salva o usuario
             return user;
         } catch (erro) {
             console.log('Erro ao adicionar usuário', erro);
@@ -56,6 +58,32 @@ class userService {
             return this.users
         } catch (erro) {
             console.log('Erro ao buscar usuário', erro);
+        }
+    }
+
+    deleteUser(id) {
+        try {
+            this.users = this.users.filter(user => user.id !== id);
+            this.saveUsers();
+        } catch (erro) {
+            console.log('Erro ao buscar usuário', erro);
+        }
+    }
+
+    alterUser(id, nome, email, senha, endereco, telefone, cpf){
+        try{
+            const user = this.users.find(user => user.id === id);
+            if(!user) throw new Error("Usuário não encontrado");
+            user.nome = nome;
+            user.email = email;
+            user.senha = senha;
+            user.endereco = endereco;
+            user.telefone = telefone;
+            user.cpf = cpf;
+            this.saveUsers();
+            return user;
+        }catch(erro){
+            console.log("Erro ao alterar um usuário", erro);
         }
     }
 
