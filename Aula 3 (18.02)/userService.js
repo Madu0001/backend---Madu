@@ -45,11 +45,16 @@ class userService {
         try {
             const senhaCripto = await bcrypt.hash (senha, 10)
             const user = new User(this.nextId++, nome, email, senhaCripto, endereço, telefone, cpf);
+            const check = this.users.some(user => user.cpf === cpf)
+            if(check){
+                throw new Error('Cpf ja cadastrado')
+            }
             this.users.push(user); //Adiciona usuario no array
             this.saveUsers(); //Salva o usuario
             return user;
         } catch (erro) {
             console.log('Erro ao adicionar usuário', erro);
+            throw erro
         }
     }
 
