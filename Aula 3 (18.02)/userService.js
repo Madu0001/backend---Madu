@@ -1,7 +1,6 @@
-const User = require("./user");
+const User = require("./Aula 3 (18.02)/user");
 const path = require('path'); //Modulo para manipular caminhos
 const fs = require('fs'); //Modulo para manipular arquivos (file system)
-const bcrypt = require('bcryptjs'); //modulo parar criptografar senhas
 
 class userService {
     constructor() {
@@ -12,17 +11,17 @@ class userService {
 
     loadUsers() {
         try {
-            if (fs.existsSync(this.filePath)) { //Verifica se o arquivo existe
-                const data = fs.readFileSync(this.filePath); //Le o arquivo
-                return JSON.parse(data); //Transforma o json em objeto
+            if (fs.existsSync(this.filePath)) { //verifica se o arquivo existe
+                const data = fs.readFileSync(this.filePath); //le o arquivo
+                return JSON.parse(data); //transforma o json em objeto
             }
         } catch (erro) {
             console.log('Erro ao carregar arquivo', erro);
         }
-        return []; //Retorna um array vazio
+        return []; //retorna um array vazio
     }
 
-    //Definir o prox id a ser utilizado
+    //definir o prox id a ser utilizado
     getNextId() {
         try {
             if (this.users.length === 0) return 1;
@@ -41,20 +40,14 @@ class userService {
     }
 
 
-    async addUser(nome, email, senha, endereço, telefone, cpf) {
+    addUser(nome, email, senha, endereço, telefone, cpf) {
         try {
-            const senhaCripto = await bcrypt.hash (senha, 10)
-            const user = new User(this.nextId++, nome, email, senhaCripto, endereço, telefone, cpf);
-            const check = this.users.some(user => user.cpf === cpf)
-            if(check){
-                throw new Error('Cpf ja cadastrado')
-            }
-            this.users.push(user); //Adiciona usuario no array
-            this.saveUsers(); //Salva o usuario
+            const user = new User(this.nextId++, nome, email, senha, endereço, telefone, cpf);
+            this.users.push(user);
+            this.saveUsers();
             return user;
         } catch (erro) {
             console.log('Erro ao adicionar usuário', erro);
-            throw erro
         }
     }
 
